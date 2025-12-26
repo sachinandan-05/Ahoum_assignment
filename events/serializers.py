@@ -5,18 +5,32 @@ from django.utils import timezone
 class EventSerializer(serializers.ModelSerializer):
     created_by_email = serializers.ReadOnlyField(source='created_by.email')
     available_seats = serializers.SerializerMethodField()
+    enrolled_count = serializers.SerializerMethodField()
+    is_enrolled = serializers.SerializerMethodField()
 
     class Meta:
         model = Event
         fields = [
             'id', 'title', 'description', 'language', 'location', 
             'starts_at', 'ends_at', 'capacity', 'available_seats',
+            'enrolled_count', 'is_enrolled',
             'created_by_email', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['created_by_email', 'created_at', 'updated_at', 'available_seats']
+        read_only_fields = ['created_by_email', 'created_at', 'updated_at', 'available_seats', 'enrolled_count', 'is_enrolled']
 
     def get_available_seats(self, obj):
         return obj.available_seats
+
+    def get_enrolled_count(self, obj):
+        """Return the total number of enrolled users for this event"""
+        return obj.enrollments.filter(status='ENROLLED').count()
+
+    def get_is_enrolled(self, obj):
+        """Check if the current user is enrolled in this event"""
+        request = self.context.get('request')
+        if request and request.user.is_authenticated:
+            return obj.enrollments.filter(seeker=request.user, status='ENROLLED').exists()
+        return False
 
     def validate(self, data):
         if data['starts_at'] >= data['ends_at']:

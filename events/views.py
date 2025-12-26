@@ -64,6 +64,18 @@ class EventViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(detail=True, methods=['delete'], permission_classes=[permissions.IsAuthenticated, IsSeeker])
+    def cancel_enrollment(self, request, pk=None):
+        """Cancel enrollment for the current user from this event"""
+        event = self.get_object()
+        try:
+            enrollment = Enrollment.objects.get(event=event, seeker=request.user, status='ENROLLED')
+            enrollment.status = 'CANCELED'
+            enrollment.save()
+            return Response({"message": "Enrollment canceled successfully."}, status=status.HTTP_200_OK)
+        except Enrollment.DoesNotExist:
+            return Response({"error": "You are not enrolled in this event."}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EnrollmentSerializer
@@ -96,3 +108,14 @@ class EnrollmentViewSet(viewsets.ReadOnlyModelViewSet):
              return self.get_paginated_response(serializer.data)
         serializer = self.get_serializer(enrollments, many=True)
         return Response(serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='cancel')
+    def cancel(self, request, pk=None):
+        """Cancel a specific enrollment"""
+        try:
+            enrollment = self.get_queryset().get(pk=pk, status='ENROLLED')
+            enrollment.status = 'CANCELED'
+            enrollment.save()
+            return Response({"message": "Enrollment canceled successfully."}, status=status.HTTP_200_OK)
+        except Enrollment.DoesNotExist:
+            return Response({"error": "Enrollment not found or already canceled."}, status=status.HTTP_404_NOT_FOUND)

@@ -1,0 +1,40 @@
+Watching for file changes with StatReloader
+/Users/sachii05/Desktop/ahoum_assignment/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+[26/Dec/2025 15:11:22] "POST /auth/signup/ HTTP/1.1" 201 55
+[26/Dec/2025 15:12:08] "POST /auth/signup/ HTTP/1.1" 201 55
+[26/Dec/2025 15:12:33] "POST /auth/login/ HTTP/1.1" 200 510
+[26/Dec/2025 15:12:48] "POST /events/events/ HTTP/1.1" 201 394
+[26/Dec/2025 15:13:02] "POST /auth/login/ HTTP/1.1" 200 505
+Forbidden: /events/events/
+[26/Dec/2025 15:13:20] "POST /events/events/ HTTP/1.1" 403 63
+[26/Dec/2025 15:13:37] "POST /events/events/2/enroll/ HTTP/1.1" 201 154
+[26/Dec/2025 15:13:46] "GET /events/enrollments/upcoming/ HTTP/1.1" 200 206
+[26/Dec/2025 15:13:58] "GET /events/events/?q=Django&location=Online HTTP/1.1" 200 445
+/Users/sachii05/Desktop/ahoum_assignment/venv/lib/python3.9/site-packages/rest_framework/pagination.py:207: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'events.models.Event'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[26/Dec/2025 15:14:11] "GET /events/events/my_events/ HTTP/1.1" 200 446
+[26/Dec/2025 15:14:21] "DELETE /events/events/2/cancel_enrollment/ HTTP/1.1" 200 47
+[26/Dec/2025 15:15:24] "GET /admin/auth/user/ HTTP/1.1" 200 12185
+[26/Dec/2025 15:15:24] "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+[26/Dec/2025 15:15:31] "GET /admin/auth/user/?is_staff__exact=1 HTTP/1.1" 200 11935
+[26/Dec/2025 15:15:31] "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+[26/Dec/2025 15:15:33] "GET /admin/auth/user/?is_staff__exact=0 HTTP/1.1" 200 12425
+[26/Dec/2025 15:15:33] "GET /admin/jsi18n/ HTTP/1.1" 200 3343
+Bad Request: /auth/signup/
+[26/Dec/2025 15:20:24] "POST /auth/signup/ HTTP/1.1" 400 46
+[26/Dec/2025 15:21:19] "POST /auth/signup/ HTTP/1.1" 201 55
+Bad Request: /auth/verify-email/
+[26/Dec/2025 15:25:25] "POST /auth/verify-email/ HTTP/1.1" 400 37
+[26/Dec/2025 15:26:06] "POST /auth/verify-email/ HTTP/1.1" 200 61
+[26/Dec/2025 15:27:02] "POST /auth/login/ HTTP/1.1" 200 505
+Not Found: /auth/profile/
+[26/Dec/2025 15:30:37] "GET /auth/profile/ HTTP/1.1" 404 3902
+Not Found: /users/profile/
+[26/Dec/2025 15:33:59] "GET /users/profile/ HTTP/1.1" 404 2718
+Not Found: /users/profile/
+[26/Dec/2025 15:36:38] "GET /users/profile/ HTTP/1.1" 404 2718
+Not Found: /users/profile/
+[26/Dec/2025 15:36:41] "GET /users/profile/ HTTP/1.1" 404 2718
+Not Found: /users/profile/
+[26/Dec/2025 15:36:42] "GET /users/profile/ HTTP/1.1" 404 2718

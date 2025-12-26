@@ -123,3 +123,55 @@ class TestEnrollment:
         response = self.client.post(url)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "already enrolled" in str(response.data)
+
+    def test_cancel_enrollment_success(self):
+        """Test that a seeker can cancel their enrollment"""
+        # First enroll
+        Enrollment.objects.create(event=self.event, seeker=self.seeker, status='ENROLLED')
+        
+        self.client.force_authenticate(user=self.seeker)
+        url = reverse('event-cancel-enrollment', args=[self.event.id])
+        response = self.client.delete(url)
+        assert response.status_code == status.HTTP_200_OK
+        
+        # Check enrollment status is now canceled
+        enrollment = Enrollment.objects.get(event=self.event, seeker=self.seeker)
+        assert enrollment.status == 'CANCELED'
+
+    def test_cancel_enrollment_not_enrolled(self):
+        """Test canceling enrollment when not enrolled fails"""
+        self.client.force_authenticate(user=self.seeker)
+        url = reverse('event-cancel-enrollment', args=[self.event.id])
+        response = self.client.delete(url)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_event_enrolled_count(self):
+        """Test that enrolled_count field is returned correctly"""
+        # Create another seeker and enroll both
+        seeker2 = User.objects.create_user(username='s2', email='s2@t.com', password='p')
+        Profile.objects.create(user=seeker2, role='SEEKER', is_verified=True)
+        
+        # Increase capacity
+        self.event.capacity = 10
+        self.event.save()
+        
+        Enrollment.objects.create(event=self.event, seeker=self.seeker, status='ENROLLED')
+        Enrollment.objects.create(event=self.event, seeker=seeker2, status='ENROLLED')
+        
+        self.client.force_authenticate(user=self.seeker)
+        url = reverse('event-detail', args=[self.event.id])
+        response = self.client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['enrolled_count'] == 2
+        assert response.data['is_enrolled'] == True
+        assert response.data['available_seats'] == 8
+
+    def test_event_is_enrolled_false_when_not_enrolled(self):
+        """Test is_enrolled is False when user is not enrolled"""
+        self.client.force_authenticate(user=self.seeker)
+        url = reverse('event-detail', args=[self.event.id])
+        response = self.client.get(url)
+        
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data['is_enrolled'] == False

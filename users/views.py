@@ -1,7 +1,10 @@
 from rest_framework import status, views, permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import SignupSerializer, VerifyEmailSerializer, LoginSerializer, ResendOTPSerializer
+from .serializers import (
+    SignupSerializer, VerifyEmailSerializer, LoginSerializer, 
+    ResendOTPSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
+)
 
 class SignupView(views.APIView):
     permission_classes = [permissions.AllowAny]
@@ -44,4 +47,33 @@ class ResendOTPView(views.APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "OTP resent successfully. Please check your email."}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetRequestView(views.APIView):
+    """Request password reset OTP"""
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # Always return success to prevent email enumeration
+            return Response({
+                "message": "If the email exists, a password reset OTP will be sent."
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetConfirmView(views.APIView):
+    """Reset password with OTP"""
+    permission_classes = [permissions.AllowAny]
+    
+    def post(self, request):
+        serializer = PasswordResetConfirmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "message": "Password reset successful. You can now login with your new password."
+            }, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

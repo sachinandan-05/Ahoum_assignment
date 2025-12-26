@@ -145,3 +145,87 @@ class ResendOTPSerializer(serializers.Serializer):
         send_otp_email(user.email, otp)
         
         return user
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    """Serializer for requesting password reset OTP"""
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        try:
+            user = User.objects.get(email=value)
+            if not user.profile.is_verified:
+                raise serializers.ValidationError("User account is not verified.")
+        except User.DoesNotExist:
+            # Return success anyway to prevent email enumeration
+            pass
+        return value
+
+    def save(self):
+        email = self.validated_data['email']
+        try:
+            user = User.objects.get(email=email)
+            profile = user.profile
+            
+            # Generate new OTP
+            otp = generate_otp()
+            profile.otp = otp
+            profile.otp_created_at = timezone.now()
+            profile.save()
+            
+            # Send OTP email
+            send_otp_email(user.email, otp)
+        except User.DoesNotExist:
+            pass  # Silently fail to prevent email enumeration
+        
+        return True
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    """Serializer for confirming password reset with OTP"""
+    email = serializers.EmailField()
+    otp = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(min_length=8, write_only=True)
+    confirm_password = serializers.CharField(min_length=8, write_only=True)
+
+    def validate(self, data):
+        email = data.get('email')
+        otp = data.get('otp')
+        new_password = data.get('new_password')
+        confirm_password = data.get('confirm_password')
+
+        # Check passwords match
+        if new_password != confirm_password:
+            raise serializers.ValidationError({"confirm_password": "Passwords do not match."})
+
+        try:
+            user = User.objects.get(email=email)
+            profile = user.profile
+        except User.DoesNotExist:
+            raise serializers.ValidationError({"email": "Invalid email or OTP."})
+
+        if profile.otp != otp:
+            raise serializers.ValidationError({"otp": "Invalid OTP."})
+
+        # Check expiry
+        otp_expiry_minutes = getattr(settings, 'OTP_EXPIRY_MINUTES', 5)
+        if profile.otp_created_at and (timezone.now() - profile.otp_created_at > timedelta(minutes=otp_expiry_minutes)):
+            raise serializers.ValidationError({"otp": "OTP has expired."})
+
+        data['user'] = user
+        return data
+
+    def save(self):
+        user = self.validated_data['user']
+        new_password = self.validated_data['new_password']
+        
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+        
+        # Clear OTP
+        user.profile.otp = None
+        user.profile.otp_created_at = None
+        user.profile.save()
+        
+        return user
