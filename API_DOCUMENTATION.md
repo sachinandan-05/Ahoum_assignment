@@ -726,11 +726,11 @@ Or for validation errors:
 ## 📸 Screenshots
 
 ### Signup API
-![Signup API](assets/Screenshot%202025-12-26%20at%208.53.38%20PM.png)
+![Signup API](assets/signup-api.png)
 
 ### Email Verification API
-![Email Verification](assets/Screenshot%202025-12-26%20at%208.55.33%20PM.png)
+![Email Verification](assets/verify-email-api.png)
 
 ### Login API
-![Login API](assets/Screenshot%202025-12-26%20at%208.56.10%20PM.png)
+![Login API](assets/login-api.png)
 
