@@ -38,3 +38,22 @@ Not Found: /users/profile/
 [26/Dec/2025 15:36:41] "GET /users/profile/ HTTP/1.1" 404 2718
 Not Found: /users/profile/
 [26/Dec/2025 15:36:42] "GET /users/profile/ HTTP/1.1" 404 2718
+[26/Dec/2025 16:15:05] "OPTIONS /auth/login/ HTTP/1.1" 200 0
+Bad Request: /auth/login/
+[26/Dec/2025 16:15:05] "POST /auth/login/ HTTP/1.1" 400 45
+[26/Dec/2025 16:15:36] "POST /auth/login/ HTTP/1.1" 200 505
+[26/Dec/2025 16:15:36] "OPTIONS /events/events/? HTTP/1.1" 200 0
+[26/Dec/2025 16:15:36] "OPTIONS /events/events/? HTTP/1.1" 200 0
+[26/Dec/2025 16:15:36] "GET /events/events/? HTTP/1.1" 200 446
+[26/Dec/2025 16:15:36] "GET /events/events/? HTTP/1.1" 200 446
+[26/Dec/2025 16:15:41] "OPTIONS /events/enrollments/upcoming/ HTTP/1.1" 200 0
+[26/Dec/2025 16:15:41] "OPTIONS /events/enrollments/upcoming/ HTTP/1.1" 200 0
+[26/Dec/2025 16:15:41] "OPTIONS /events/enrollments/past/ HTTP/1.1" 200 0
+[26/Dec/2025 16:15:41] "OPTIONS /events/enrollments/past/ HTTP/1.1" 200 0
+/Users/sachii05/Desktop/ahoum_assignment/venv/lib/python3.9/site-packages/rest_framework/pagination.py:207: UnorderedObjectListWarning: Pagination may yield inconsistent results with an unordered object_list: <class 'events.models.Enrollment'> QuerySet.
+  paginator = self.django_paginator_class(queryset, page_size)
+[26/Dec/2025 16:15:41] "GET /events/enrollments/upcoming/ HTTP/1.1" 200 52
+[26/Dec/2025 16:15:41] "GET /events/enrollments/past/ HTTP/1.1" 200 52
+[26/Dec/2025 16:15:41] "GET /events/enrollments/upcoming/ HTTP/1.1" 200 52
+[26/Dec/2025 16:15:41] "GET /events/enrollments/past/ HTTP/1.1" 200 52
+[27/Dec/2025 12:36:13] "GET /admin/auth/user/?is_staff__exact=0 HTTP/1.1" 200 12899

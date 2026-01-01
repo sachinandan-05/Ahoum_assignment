@@ -720,7 +720,6 @@ Or for validation errors:
 4. **Use access token** in Authorization header
 5. **Refresh token** when expired: `POST /auth/refresh/`
 
-
 ---
 
 ## 📸 Screenshots
